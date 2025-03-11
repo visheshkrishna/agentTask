@@ -1,0 +1,27 @@
+# Virtual environment (should NOT be in Git)
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables (Sensitive credentials)
+.env
+
+# Logs & runtime-generated files
+*.log
+
+# Database files (if generated during runtime)
+*.db
+
+# Test cache
+.pytest_cache/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Image files (if not needed in repo)
+*.png
