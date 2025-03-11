@@ -103,7 +103,7 @@ The output of the task will be seen in the terminal as
 
 This indicates that customer has been added successfully.
 
-![The highlighted text logs that new customer has been added](images/screenshot.png)
+![The highlighted text logs that new customer has been added](images/image1.png)
 
 # BUG IDENTIFIED
 ## Testing for Total customers present on the dashboad is equal to toal customers in the list on https://qacrmdemo.netlify.app/customers page.
