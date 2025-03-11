@@ -33,19 +33,26 @@ This project implements an automated QA testing solution with API integration fo
 
 ## Setup
 
-1. Create and activate a virtual environment:
+1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/your-repository.git
+cd your-repository
+```
+
+2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-2. Install dependencies:
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 playwright install  # Install browser binaries
 ```
 
-3. Initialize the database:
+4. Initialize the database:
 ```bash
 python init_db.py
 ```
