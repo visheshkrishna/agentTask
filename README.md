@@ -41,9 +41,15 @@ cd your-repository
 ```
 
 2. Create and activate a virtual environment:
+For Windows users:
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+venv\Scripts\activate  # On Windows, use this to activate the virtual environment
+```
+For macOS/Linux users:
+```bash
+python3 -m venv venv
+source venv/bin/activate  # This activates the virtual environment
 ```
 
 3. Install dependencies:
