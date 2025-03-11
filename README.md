@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # QA Agent with API Integration
 
 This project implements an automated QA testing solution with API integration for testing web applications. It specifically focuses on testing the QA CRM Demo Site (https://qacrmdemo.netlify.app/).
