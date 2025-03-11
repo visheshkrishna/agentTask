@@ -73,76 +73,144 @@ uvicorn api.main:app --reload
 2. The API will be available at http://localhost:8000
 
 ## API Endpoints
-
-### Create a Test Task
-```http
-POST /tasks
-Content-Type: application/json
-
-{
-    "goal": "Test customer form and report creation",
-    "headless": true,
-    "url": "https://qacrmdemo.netlify.app"
-}
+## POST API CALL
+## Testing if customer is added successfully
+```bash
+curl -X POST http://127.0.0.1:8000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"goal": "add customer"}'
 ```
+#### Don't change the goal value to something else since the add customer is used to trigger the agent. Using other variable can lead to errors
+
+#### Agent will automatically open the browser and perform the tasks on the website.
+
+Once you run the command, you will get the "task_id" in the terminal. 
+Copy the "task_id" and replace it with <taskid> in GET API call.
 
 ### Get Task Status
-```http
-GET /tasks/{task_id}
+```bash
+curl -X GET "http://127.0.0.1:8000/tasks/<TASK_ID>"
 ```
 
 ## Example Usage
-
-1. Create a new test task:
 ```bash
-curl -X POST "http://localhost:8000/tasks" \
-     -H "Content-Type: application/json" \
-     -d '{"goal": "Test customer form and report creation", "headless": true}'
+curl -X GET "http://127.0.0.1:8000/tasks/123e4567-e89b-12d3-a456-426614174000"
 ```
 
-2. Check task status:
+## RESULT
+The output of the task will be seen in the terminal as 
+#### "[Customer 'Test Customer 1741670553' found on the current page!]"
+
+This indicates that customer has been added successfully.
+
+![The highlighted text logs that new customer has been added](images/screenshot.png)
+
+# BUG IDENTIFIED
+## Testing for Total customers present on the dashboad is equal to toal customers in the list on https://qacrmdemo.netlify.app/customers page.
 ```bash
-curl "http://localhost:8000/tasks/{task_id}"
+curl -X POST http://127.0.0.1:8000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"goal": "verify total customers"}'
+```
+#### Don't change the goal value to something else since the verrify total customer is used to trigger the agent. Using other variable can lead to errors
+
+#### Agent will automatically open the browser and perform the tasks on the website.
+
+Once you run the command, you will get the "task_id" in the terminal. 
+Copy the "task_id" and replace it with <taskid> in GET API call.
+
+### Get Task Status
+```bash
+curl -X GET "http://127.0.0.1:8000/tasks/<TASK_ID>"
 ```
 
-## Features Tested
+## Example Usage
+```bash
+curl -X GET "http://127.0.0.1:8000/tasks/wefr44-e89b-12d3-a456-426614174000"
+```
 
-1. Customer Form:
-   - Form field input functionality
-   - Form submission
-   - Validation of required fields
-   - Success verification
+## RESULT
+The output of the task will be seen in the terminal as 
+#### "[FAIL] Count mismatch: Dashboard=42, Counted=22"
 
-2. Report Creation:
-   - Report form functionality
-   - Data source selection
-   - Date range selection
-   - Report persistence
-   - Report details page
-   - Report list verification
+This indicates that total customer number is wrong.
 
-## Known Issues and Future Improvements
+![The highlighted text logs that the number of customers being displayed on dashboard is wrong.](images/image2.png)
 
-1. Current Limitations:
-   - Form field interaction can be flaky
-   - Report persistence verification needs improvement
-   - Limited error recovery
 
-2. Future Improvements:
-   - Add retry mechanisms for flaky operations
-   - Implement better error handling
-   - Add more comprehensive test scenarios
-   - Implement test result caching
-   - Add API authentication
-   - Add parallel test execution support
+# ANOTHER WAY OF TESTING
+## BUG IDENTIFIED
 
-## Contributing
+### Running the Application
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request 
-=======
-# agentTask
->>>>>>> 0a113e1d21450f447f7b61fbe23f94d25e86978c
+1. Start the API server:
+```bash
+uvicorn api.main:app --reload
+```
+
+2. Open the link on browser
+```bash
+http://localhost:8000/docs
+```
+
+3. Select POST/tasks click on "Try it out"
+Navigate to Request Body and paste the below Code and click on generate. 
+```bash
+{
+  "goal": "verify total customers"
+}
+```
+Do not change the goal value
+
+#### Agent will automatically open the browser and perform the tasks on the website.
+
+task_id will be genereated in the server response and Copy the task_id
+![The highlighted text shows the task_id.](images/image5.png)
+
+4. Select GET/tasks/{task_id} click on "Try it out"
+Navigate to task-id. Paste the task_id and click on generate. 
+
+In server response you will see that 
+#### "[FAIL] Count mismatch: Dashboard=42, Counted=22"
+
+![The highlighted text shows the customer has been created.](images/image6.png)
+
+
+
+
+
+### ADDING CUSTOMER
+### Running the Application
+
+1. Start the API server:
+```bash
+uvicorn api.main:app --reload
+```
+
+2. Open the link on browser
+```bash
+http://localhost:8000/docs
+```
+
+3. Select POST/tasks click on "Try it out"
+Navigate to Request Body and paste the below Code and click on generate. 
+```bash
+{
+  "goal": "add customer"
+}
+```
+Do not change the goal value
+
+#### Agent will automatically open the browser and perform the tasks on the website.
+
+task_id will be genereate in the server response and Copy the task_id
+![The highlighted text shows the task_id.](images/image3.png)
+
+4. Select GET/tasks/{task_id} click on "Try it out"
+Navigate to task-id. Paste the task_id and click on generate. 
+
+In server response you will see that 
+#### "[Customer 'Test Customer 1741670553' found on the current page!]
+
+![The highlighted text shows the customer has been created.](images/image4.png)
+
