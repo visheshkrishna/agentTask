@@ -107,17 +107,17 @@ def _update_task_direct(task_id: str, status: str, result: Optional[str] = None)
         if 'conn' in locals():
             conn.close()
 
-def run_test_sync(task_id: str, url: str = "https://qacrmdemo.netlify.app", headless: bool = False):
+def run_test_sync(task_id: str, url: str = "https://qacrmdemo.netlify.app", headless: bool = False, goal: str = "add customer"):
     try:
-        print(f"Starting test execution for task {task_id}")
+        print(f"Starting test execution for task {task_id} with goal: {goal}")
         task_id = task_id.strip('"')
-        log_step(task_id, "Starting test with direct debug")
+        log_step(task_id, f"Starting test with direct debug for goal: {goal}")
 
         if db is not None:
             try:
                 task_info = db.get_task(task_id)
                 if not task_info:
-                    parameters = {"url": url, "headless": headless}
+                    parameters = {"url": url, "headless": headless, "goal": goal}
                     db.create_task(task_id, parameters)
             except Exception as db_error:
                 print(f"Database operation failed: {str(db_error)}")
@@ -127,7 +127,8 @@ def run_test_sync(task_id: str, url: str = "https://qacrmdemo.netlify.app", head
 
         log_step(task_id, f"Setting up test with URL: {url}, headless: {headless}")
 
-        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "temp_test.py")
+        script_name = "temp_test.py" if goal.lower() != "verify total customers" else "verify_total_customers.py"
+        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", script_name)
 
         log_step(task_id, "Starting test execution")
         os.environ["TEST_URL"] = url
@@ -135,13 +136,13 @@ def run_test_sync(task_id: str, url: str = "https://qacrmdemo.netlify.app", head
 
         python_executable = sys.executable
         log_step(task_id, f"Using Python executable: {python_executable}")
-        log_step(task_id, f"Temp script path: {script_path}")
+        log_step(task_id, f"Script path: {script_path}")
         if os.path.exists(script_path):
-            log_step(task_id, "Temp script exists")
+            log_step(task_id, "Script exists")
             log_step(task_id, f"Script size: {os.path.getsize(script_path)} bytes")
         else:
-            log_step(task_id, "Temp script does not exist")
-            raise Exception("Failed to create temporary test script")
+            log_step(task_id, "Script does not exist")
+            raise Exception("Failed to locate the script")
 
         if db is not None:
             try:
@@ -183,7 +184,8 @@ def run_test_sync(task_id: str, url: str = "https://qacrmdemo.netlify.app", head
                 _update_task_direct(task_id, "completed", "Test completed successfully")
                 return 0
             else:
-                _update_task_direct(task_id, "failed", f"Test failed with return code {return_code}")
+                result_msg = f"{'Verify total customers test' if goal.lower() == 'verify total customers' else 'Add customer test'} failed with return code {return_code}"
+                _update_task_direct(task_id, "failed", result_msg)
                 return 1
 
         except Exception as e:

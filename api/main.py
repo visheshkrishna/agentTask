@@ -1,7 +1,4 @@
-"""
-FastAPI application for QA Agent.
-"""
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uuid
@@ -41,7 +38,7 @@ app.add_middleware(
 )
 
 class Task(BaseModel):
-    goal: Optional[str] = None
+    goal: Optional[str] = "add customer"
     headless: bool = False
     url: str = "https://qacrmdemo.netlify.app"
 
@@ -70,6 +67,13 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS logs (
+                task_id TEXT,
+                timestamp TEXT,
+                message TEXT
+            )
+        ''')
         conn.commit()
         conn.close()
         logger.info("Database initialization successful")
@@ -90,17 +94,17 @@ def update_task_status(task_id: str, status: str, result: Optional[str] = None):
     except Exception as e:
         logger.error(f"Error updating task {task_id} status: {e}")
 
-async def run_test_task(task_id: str, url: str, headless: bool, goal: Optional[str] = None):
+async def run_test_task(task_id: str, url: str, headless: bool, goal: Optional[str] = "add customer"):
     logger.info(f"Starting async task {task_id} for goal '{goal}' at {url}")
     update_task_status(task_id, "running")
 
     loop = asyncio.get_event_loop()
-    success = await loop.run_in_executor(None, run_test_sync, task_id, url, headless)
+    success = await loop.run_in_executor(None, run_test_sync, task_id, url, headless, goal)
 
     if success == 0:
-        update_task_status(task_id, "completed", "Tests completed successfully")
+        update_task_status(task_id, "completed", f"{goal.capitalize()} test completed successfully")
     else:
-        update_task_status(task_id, "failed", f"Test failed with return code {success}")
+        update_task_status(task_id, "failed", f"{goal.capitalize()} test failed with return code {success}")
 
 @app.on_event("startup")
 async def startup_event():
@@ -122,7 +126,7 @@ async def log_requests(request: Request, call_next):
 @app.post("/tasks", response_model=TaskResponse)
 async def create_task(task: Task):
     task_id = str(uuid.uuid4())
-    logger.info(f"Creating task {task_id}")
+    logger.info(f"Creating task {task_id} for goal: {task.goal}")
 
     task_data = {
         "url": task.url,
