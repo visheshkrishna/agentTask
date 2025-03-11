@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # QA Agent with API Integration
 
 This project implements an automated QA testing solution with API integration for testing web applications. It specifically focuses on testing the QA CRM Demo Site (https://qacrmdemo.netlify.app/).
@@ -129,3 +130,6 @@ curl "http://localhost:8000/tasks/{task_id}"
 3. Commit your changes
 4. Push to the branch
 5. Create a new Pull Request 
+=======
+# agentTask
+>>>>>>> 0a113e1d21450f447f7b61fbe23f94d25e86978c
